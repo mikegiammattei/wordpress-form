@@ -1,72 +1,82 @@
 <?php
-    /* Plugin Name:  WordPress Form
-    Plugin URI:   http://WordPressForm.com
-    Description:  The most robust WordPress Form built by experts developers.
-    Version:      1.0
-    Author:       Michael Giammattei
-    Author URI:   http://website-company.com/
-    License:      GPL2
-    License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 
-    WordPress Form is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    any later version.
+/**
+ * The plugin bootstrap file
+ *
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all of the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and defines a function
+ * that starts the plugin.
+ *
+ * @link              http://wordpressform.com
+ * @since             1.0.0
+ * @package           wordpress_form
+ *
+ * @wordpress-plugin
+ * Plugin Name:       WordPress Form
+ * Plugin URI:        http://wordpressform.com/plugin-name-uri/
+ * Description:       The most robust WordPress Form built by experts developers.
+ * Version:           1.0.0
+ * Author:            Website Company
+ * Author URI:        http://website-company.com/
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       wordpress-form
+ * Domain Path:       /languages
+ */
 
-    WordPress Form is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
-    You should have received a copy of the GNU General Public License
-    along with {Plugin Name}. If not, see {URI to Plugin License}.
-    */
+/**
+ * Currently plugin version.
+ * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Rename this for your plugin and update it as you release new versions.
+ */
+define( 'PLUGIN_NAME_VERSION', '1.0.0' );
 
-    function wordpressform_activate(){
+/**
+ * The code that runs during plugin activation.
+ * This action is documented in includes/class-plugin-name-activator.php
+ */
+function activate_plugin_name() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name-activator.php';
+	Plugin_Name_Activator::activate();
+}
 
-        global $wpdb;
+/**
+ * The code that runs during plugin deactivation.
+ * This action is documented in includes/class-plugin-name-deactivator.php
+ */
+function deactivate_plugin_name() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name-deactivator.php';
+	Plugin_Name_Deactivator::deactivate();
+}
 
-        $tableName = $wpdb->prefix . 'wordpresform';
+register_activation_hook( __FILE__, 'activate_plugin_name' );
+register_deactivation_hook( __FILE__, 'deactivate_plugin_name' );
 
-        /** Check if the database exists */
-        if($wpdb->get_var('SHOW TABLES LIKE ' . $tableName) != $tableName){
+/**
+ * The core plugin class that is used to define internationalization,
+ * admin-specific hooks, and public-facing site hooks.
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-plugin-name.php';
 
-            $sql = "CREATE TABLE " . $tableName . "(
-                id INT(10) PRIMARY KEY AUTO_INCREMENT,
-                companyName VARCHAR(255),
-                pointOfContactName VARCHAR(255),
-                pointOfContactId    VARCHAR(255),
-                recorededDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )";
+/**
+ * Begins execution of the plugin.
+ *
+ * Since everything within the plugin is registered via hooks,
+ * then kicking off the plugin from this point in the file does
+ * not affect the page life cycle.
+ *
+ * @since    1.0.0
+ */
+function run_plugin_name() {
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	$plugin = new Plugin_Name();
+	$plugin->run();
 
-            dbDelta($sql);
-
-            add_option('wordpressform_database_version', '1.0');
-
-        }
-    }
-    register_activation_hook(__FILE__ , 'wordpressform_activate');
-
-    function wordpressform_uninstall(){
-
-        global $wpdb;
-
-        $tableName = $wpdb->prefix . 'wordpresform';
-
-        /** Check if the database exists */
-        if($wpdb->get_var('SHOW TABLES LIKE ' . $tableName) != $tableName){
-
-            $sql = "DROP TABLE " . $tableName;
-
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-            $wpdb->query($sql);
-
-        }
-    }
-
-    //register_deactivation_hook(__FILE__ , 'wordpressform_deactivate');
-
-    register_uninstall_hook(__FILE__, 'wordpressform_uninstall');
+}
+run_plugin_name();
